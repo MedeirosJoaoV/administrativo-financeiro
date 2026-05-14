@@ -66,7 +66,7 @@ function App() {
       formData.append("file", file);
 
       const response = await axios.post(
-        "http://localhost:3000/api/notas/upload",
+        "/api/notas/upload",
         formData,
       );
 
@@ -89,7 +89,7 @@ function App() {
     try {
       setAnalisando(true);
       const response = await axios.post(
-        "http://localhost:3000/api/notas/analisar",
+        "/api/notas/analisar",
         resultado
       );
       setAnalise(response.data.analise);
@@ -105,7 +105,7 @@ function App() {
     if (!resultado || !analise) return;
     try {
       setSalvando(true);
-      await axios.post("http://localhost:3000/api/notas/salvar", {
+      await axios.post("/api/notas/salvar", {
         dados: resultado,
         analise: analise
       });

@@ -1,4 +1,4 @@
-# Administrativo Financeiro - Extração de Notas Fiscais com IA
+![alt text](image.png)# Administrativo Financeiro - Extração de Notas Fiscais com IA
 
 Este projeto é um sistema web para **Extração e Análise de Notas Fiscais em PDF** utilizando Inteligência Artificial (Google Gemini). O sistema processa o PDF da nota, extrai os dados estruturados (Fornecedor, Cliente, Produtos, Parcelas), classifica a categoria da despesa, e em seguida cruza os dados com um Banco de Dados SQLite local para verificar a existência dos registros e efetivar a persistência.
 
@@ -50,6 +50,23 @@ A forma mais fácil de rodar o projeto é utilizando o Docker Compose, pois ele 
 4. Acesse o sistema pelo navegador:
    - **Frontend**: [http://localhost:5173](http://localhost:5173)
    - **Backend API**: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## ☁️ Como rodar via Docker Hub (Sem precisar do código-fonte)
+
+Caso você queira rodar o projeto em outra máquina (ou enviar para avaliação) **sem precisar baixar todo o código fonte**, você pode usar as imagens pré-compiladas publicadas no Docker Hub.
+
+1. Baixe apenas dois arquivos do repositório:
+   - `docker-compose.prod.yml`
+   - `.env` (crie com a sua chave do Gemini, conforme passo de Configuração Inicial)
+2. Coloque os dois arquivos na mesma pasta.
+3. Abra o terminal nessa pasta e execute:
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+4. O Docker irá baixar as imagens oficiais (`joaovitormedeiros/admin-financeiro-backend` e `frontend`) e subir o sistema automaticamente.
+5. Acesse [http://localhost:5173](http://localhost:5173) no navegador.
 
 ---
 

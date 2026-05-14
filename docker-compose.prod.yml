@@ -1,26 +1,18 @@
-version: '3.8'
-
 services:
   backend:
-    build: .
+    image: joaovitormedeiros/admin-financeiro-backend:latest
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
     env_file:
       - .env
     environment:
       - MODO_MOCK=false
 
   frontend:
-    build: ./frontend
+    image: joaovitormedeiros/admin-financeiro-frontend:latest
     ports:
       - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     environment:
-      - BACKEND_URL=http://backend:3000
+      - BACKEND_URL=http://localhost:3000
     depends_on:
       - backend
