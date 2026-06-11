@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Apresentação do Projeto - Etapa 3: Consulta com RAG</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #0F172A;
+            --secondary: #2563EB;
+            --success: #10B981;
+            --bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border: #E2E8F0;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--secondary);
+            margin: 0 0 15px 0;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .meta-item strong {
+            color: var(--text-main);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            border-left: 5px solid var(--secondary);
+            padding-left: 12px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 15.5px;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-item {
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-name {
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .file-action {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .action-new {
+            background-color: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .action-modify {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background-color: #F8FAFC;
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-blue {
+            color: var(--secondary);
+        }
+
+        .icon-green {
+            color: var(--success);
+        }
+
+        .highlight-box {
+            background-color: #ECFDF5;
+            border-left: 5px solid var(--success);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+
+        .highlight-box h4 {
+            margin: 0 0 10px 0;
+            color: #065F46;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #047857;
+            font-size: 14.5px;
+        }
+
+        .code-block {
+            background-color: #0F172A;
+            color: #38BDF8;
+            font-family: 'Consolas', monospace;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Apresentação de Implementação</h1>
+        <h2>3ª Etapa: Consulta de Banco de Dados com RAG</h2>
+        <div class="meta-info">
+            <div class="meta-item">Aluno/Autor: <strong>João Vitor Medeiros</strong></div>
+            <div class="meta-item">Matéria: <strong>Engenharia de Software</strong></div>
+            <div class="meta-item">Data: <strong>11/06/2026</strong></div>
+        </div>
+    </div>
+
+    <p>
+        Este documento apresenta o relatório detalhado do que foi feito e os locais exatos onde as implementações foram realizadas para concluir com êxito a <strong>3ª Etapa: Consulta com RAG (Retrieval-Augmented Generation)</strong> do projeto Administrativo Financeiro.
+    </p>
+
+    <div class="section-title">O que foi desenvolvido?</div>
+    <p>
+        Foi criada a estrutura completa de busca utilizando Inteligência Artificial acoplada ao Banco de Dados SQLite local por meio da técnica de <strong>RAG</strong>. Foram disponibilizados dois métodos distintos de busca para o usuário:
+    </p>
+
+    <div class="grid-2">
+        <div class="feature-card">
+            <h3><span class="icon-blue">🔍</span> RAG Simples (Keyword Match)</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 0;">
+                Recupera os registros do banco de dados convertidos em formato textual com base na correspondência direta de palavras-chave extraídas da pergunta (removendo stop words do português). Ordena os resultados pelo maior número de correspondências antes de submeter ao modelo de linguagem Gemini 2.5 Flash.
+            </p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="icon-green">🔮</span> RAG Embeddings (Busca Semântica)</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 0;">
+                Gera e armazena vetores numéricos de 3072 dimensões (embeddings) para cada registro e para a pergunta usando a API do Gemini (modelo <code>gemini-embedding-2</code>). Efetua a similaridade de cosseno em memória para encontrar as correlações semânticas mais próximas, oferecendo respostas precisas mesmo que os termos de busca não sejam idênticos aos cadastrados.
+            </p>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h4>⚡ Sistema de Cache em Banco de Dados</h4>
+        <p>
+            Para garantir máximo desempenho e economia de tokens da API do Gemini, foi desenvolvida uma tabela de cache no SQLite (<code>DOCUMENT_EMBEDDINGS</code>). Os embeddings vetoriais de cada registro do sistema são gerados apenas uma vez e reaproveitados nas consultas subsequentes. O cache é sincronizado e atualizado dinamicamente caso o registro sofra alterações ou novas notas sejam integradas.
+        </p>
+    </div>
+
+    <div class="section-title">Arquivos Modificados e Criados</div>
+    <p>
+        De acordo com as diretrizes do escopo, <strong>nenhum recurso existente foi excluído ou refeito</strong>; apenas incrementamos a base pré-existente adicionando as seguintes rotas e componentes:
+    </p>
+
+    <ul class="file-list">
+        <li class="file-item">
+            <div>
+                <span class="file-name">src/database/db.ts</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Adicionada criação automática da tabela <code>DOCUMENT_EMBEDDINGS</code> na inicialização do banco.</div>
+            </div>
+            <span class="file-action action-modify">Modificado</span>
+        </li>
+        <li class="file-item">
+            <div>
+                <span class="file-name">src/services/ragService.ts</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Serviço central: implementa a conversão de tabelas do banco em texto, cálculo de cosseno, cache e consulta ao Gemini.</div>
+            </div>
+            <span class="file-action action-new">Novo</span>
+        </li>
+        <li class="file-item">
+            <div>
+                <span class="file-name">src/controllers/ragController.ts</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Valida os parâmetros da requisição e aciona o tipo de RAG selecionado pelo usuário.</div>
+            </div>
+            <span class="file-action action-new">Novo</span>
+        </li>
+        <li class="file-item">
+            <div>
+                <span class="file-name">src/routes/notasRoutes.ts</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Registrada a rota POST <code>/api/notas/rag</code> no roteador Express.</div>
+            </div>
+            <span class="file-action action-modify">Modificado</span>
+        </li>
+        <li class="file-item">
+            <div>
+                <span class="file-name">frontend/src/App.tsx</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Adicionada aba superior de navegação para Consulta RAG, caixa de texto, seletor de modalidade e painel de fontes.</div>
+            </div>
+            <span class="file-action action-modify">Modificado</span>
+        </li>
+        <li class="file-item">
+            <div>
+                <span class="file-name">frontend/src/index.css</span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Estilos visuais premium para os toggles de seleção do RAG, textarea, caixa de resposta da IA e sanfona de fontes.</div>
+            </div>
+            <span class="file-action action-modify">Modificado</span>
+        </li>
+    </ul>
+
+    <div class="section-title">Estrutura do Prompt de Instrução da LLM</div>
+    <p>
+        A IA foi configurada para atuar estritamente como um assistente financeiro baseado em dados. O prompt força o modelo a responder <strong>apenas com o contexto fornecido</strong> pelo RAG:
+    </p>
+    <div class="code-block">
+Você é um assistente financeiro inteligente e analítico do sistema Administrativo Financeiro.
+Seu objetivo é responder à pergunta do usuário baseando-se estritamente nos dados do banco de dados contidos no CONTEXTO abaixo.
+Regras:
+1. Baseie sua resposta APENAS nos dados informados no contexto. Não invente ou presuma informações.
+2. Caso o contexto não contenha informações suficientes, diga que não encontrou essa informação.
+3. Formate valores monetários em R$ e datas em DD/MM/AAAA.
+    </div>
+
+    <div class="section-title">Demonstração de Funcionamento (Resultados dos Testes)</div>
+    <p>
+        Durante os testes integrados locais, o sistema respondeu corretamente às consultas baseadas em dados inseridos no banco:
+    </p>
+    <ul>
+        <li>
+            <strong>Pergunta:</strong> "Qual o valor total que gastei com Beltrano Insumos?"<br>
+            <strong>Fontes Recuperadas (SQLite):</strong> Movimentação ID 8 (Beltrano Insumos, Valor: R$ 1500.00)<br>
+            <strong>Resposta da IA:</strong> <em>"O valor total registrado de despesas com a empresa BELTRANO INSUMOS LTDA é de R$ 1.500,00."</em>
+        </li>
+        <li style="margin-top: 15px;">
+            <strong>Pergunta:</strong> "Quais despesas eu tive com manutenção ou operação?"<br>
+            <strong>Fontes Recuperadas (SQLite - Busca Semântica por Cosseno):</strong> Movimentação ID 9 (Agropecuaria São João, Categoria: MANUTENÇÃO E OPERAÇÃO, Valor: R$ 320.00)<br>
+            <strong>Resposta da IA:</strong> <em>"Identifiquei a seguinte despesa nesta categoria: Fornecedor Agropecuaria São João no valor de R$ 320,00."</em>
+        </li>
+    </ul>
+    
+    <p style="text-align: center; margin-top: 50px; font-weight: bold; color: var(--secondary);">
+        ✓ Projeto Concluído com Sucesso e Pronto para Avaliação!
+    </p>
+</div>
+
+</body>
+</html>

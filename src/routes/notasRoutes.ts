@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import { processarNota } from "../controllers/notasController";
 import { analisarDados, salvarDados } from "../controllers/analiseController";
+import { consultarRAG } from "../controllers/ragController";
 
 const router = Router();
 
@@ -29,5 +30,6 @@ const upload = multer({
 router.post("/upload", upload.single("file"), processarNota);
 router.post("/analisar", analisarDados);
 router.post("/salvar", salvarDados);
+router.post("/rag", consultarRAG);
 
 export default router;

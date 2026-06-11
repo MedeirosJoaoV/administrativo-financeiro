@@ -53,6 +53,12 @@ export async function getDb(): Promise<Database> {
             FOREIGN KEY (classificacaoId) REFERENCES CLASSIFICACAO(id),
             PRIMARY KEY (movimentoId, classificacaoId)
         );
+
+        CREATE TABLE IF NOT EXISTS DOCUMENT_EMBEDDINGS (
+            id TEXT PRIMARY KEY,
+            text TEXT NOT NULL,
+            embedding TEXT NOT NULL
+        );
     `);
 
     return dbInstance;
