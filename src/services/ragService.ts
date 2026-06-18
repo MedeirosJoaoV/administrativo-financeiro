@@ -91,6 +91,54 @@ export async function buildChunks(): Promise<Chunk[]> {
         });
     }
 
+    // 4. Chunks de Resumos Anuais (para responder perguntas agregadas do professor como soma anual e maior fornecedor)
+    const resumoAnual = await db.all(`
+        SELECT 
+            m.id, m.valorTotal, p.razaoSocial,
+            (SELECT MIN(substr(dataVencimento, 1, 4)) FROM PARCELACONTAS WHERE movimentoId = m.id) as ano
+        FROM MOVIMENTOCONTAS m
+        JOIN PESSOAS p ON m.pessoaId = p.id
+        WHERE m.ativo = 1
+    `);
+
+    const anosMap = new Map<string, { total: number, fornecedores: Map<string, number> }>();
+    for (const row of resumoAnual) {
+        const ano = row.ano || "N/A";
+        if (!anosMap.has(ano)) {
+            anosMap.set(ano, { total: 0, fornecedores: new Map() });
+        }
+        const aData = anosMap.get(ano)!;
+        aData.total += row.valorTotal;
+
+        const fornecedor = row.razaoSocial;
+        aData.fornecedores.set(fornecedor, (aData.fornecedores.get(fornecedor) || 0) + row.valorTotal);
+    }
+
+    for (const [ano, data] of anosMap.entries()) {
+        if (ano === "N/A") continue;
+
+        let maiorFornecedor = "";
+        let maiorValor = 0;
+        const detalhes: string[] = [];
+        for (const [forn, val] of data.fornecedores.entries()) {
+            detalhes.push(`${forn}: R$ ${val.toFixed(2)}`);
+            if (val > maiorValor) {
+                maiorValor = val;
+                maiorFornecedor = forn;
+            }
+        }
+
+        const text = `Resumo Anual de Notas Fiscais do Ano de ${ano}. ` +
+            `O valor total pago/lançado em Notas Fiscais emitidas/vencidas no ano de ${ano} foi de R$ ${data.total.toFixed(2)}. ` +
+            `O fornecedor responsável pelo maior valor nesse período (ano de ${ano}) foi ${maiorFornecedor} com o total acumulado de R$ ${maiorValor.toFixed(2)}. ` +
+            `Detalhamento completo de gastos por fornecedor no ano de ${ano}: ${detalhes.join("; ")}.`;
+
+        chunks.push({
+            id: `summary_year_${ano}`,
+            text
+        });
+    }
+
     return chunks;
 }
 
