@@ -10,7 +10,9 @@ export async function extrairDadosPDF(filePath: string) {
         console.log("Iniciando upload para o Google Gemini...");
         const uploadResult = await ai.files.upload({
             file: filePath,
-            mimeType: "application/pdf",
+            config: {
+                mimeType: "application/pdf",
+            }
         });
 
         console.log("Upload concluído. Gerando conteúdo...");
