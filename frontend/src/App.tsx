@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || ""
+});
+
 // --- Types ---
 type Pessoa = {
   id: number;
@@ -78,9 +82,9 @@ function App() {
   // Function to refresh dropdown lists (loads active ones)
   const refreshDropdowns = async () => {
     try {
-      const resP = await axios.get("/api/pessoas?todos=true");
+      const resP = await api.get("/api/pessoas?todos=true");
       setDropdownPessoas(resP.data);
-      const resC = await axios.get("/api/classificacoes?todos=true");
+      const resC = await api.get("/api/classificacoes?todos=true");
       setDropdownClassificacoes(resC.data);
     } catch (error) {
       console.error("Erro ao carregar listas auxiliares:", error);
@@ -128,7 +132,7 @@ function App() {
         alert("Digite um termo para busca ou clique em TODOS.");
         return;
       }
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setPessoas(res.data);
     } catch (error: any) {
       alert(error.response?.data?.erro || "Erro ao carregar pessoas.");
@@ -143,14 +147,14 @@ function App() {
     }
     try {
       if (isEditingPessoa && pessoaForm.id) {
-        await axios.put(`/api/pessoas/${pessoaForm.id}`, {
+        await api.put(`/api/pessoas/${pessoaForm.id}`, {
           tipo: pessoaForm.tipo,
           razaoSocial: pessoaForm.razaoSocial,
           cnpjCpf: pessoaForm.cnpjCpf || null,
         });
         alert("Pessoa atualizada com sucesso!");
       } else {
-        await axios.post("/api/pessoas", {
+        await api.post("/api/pessoas", {
           tipo: pessoaForm.tipo,
           razaoSocial: pessoaForm.razaoSocial,
           cnpjCpf: pessoaForm.cnpjCpf || null,
@@ -169,7 +173,7 @@ function App() {
   const deletePessoa = async (id: number) => {
     if (!window.confirm("Deseja realmente inativar este registro?")) return;
     try {
-      await axios.delete(`/api/pessoas/${id}`);
+      await api.delete(`/api/pessoas/${id}`);
       alert("Registro inativado com sucesso!");
       fetchPessoas(true); // reload active list
       refreshDropdowns();
@@ -229,7 +233,7 @@ function App() {
         alert("Digite um termo para busca ou clique em TODOS.");
         return;
       }
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setClassificacoes(res.data);
     } catch (error: any) {
       alert(error.response?.data?.erro || "Erro ao carregar classificações.");
@@ -244,13 +248,13 @@ function App() {
     }
     try {
       if (isEditingClassificacao && classificacaoForm.id) {
-        await axios.put(`/api/classificacoes/${classificacaoForm.id}`, {
+        await api.put(`/api/classificacoes/${classificacaoForm.id}`, {
           tipo: classificacaoForm.tipo,
           descricao: classificacaoForm.descricao,
         });
         alert("Classificação atualizada com sucesso!");
       } else {
-        await axios.post("/api/classificacoes", {
+        await api.post("/api/classificacoes", {
           tipo: classificacaoForm.tipo,
           descricao: classificacaoForm.descricao,
         });
@@ -268,7 +272,7 @@ function App() {
   const deleteClassificacao = async (id: number) => {
     if (!window.confirm("Deseja realmente inativar esta classificação?")) return;
     try {
-      await axios.delete(`/api/classificacoes/${id}`);
+      await api.delete(`/api/classificacoes/${id}`);
       alert("Classificação inativada com sucesso!");
       fetchClassificacoes(true);
       refreshDropdowns();
@@ -333,7 +337,7 @@ function App() {
         alert("Digite um termo para busca ou clique em TODOS.");
         return;
       }
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setContas(res.data);
     } catch (error: any) {
       alert("Erro ao carregar contas.");
@@ -445,10 +449,10 @@ function App() {
       };
 
       if (isEditingConta && contaForm.id) {
-        await axios.put(`/api/contas/${contaForm.id}`, payload);
+        await api.put(`/api/contas/${contaForm.id}`, payload);
         alert("Conta atualizada com sucesso!");
       } else {
-        await axios.post("/api/contas", payload);
+        await api.post("/api/contas", payload);
         alert("Conta lançada com sucesso!");
       }
 
@@ -463,7 +467,7 @@ function App() {
   const deleteConta = async (id: number) => {
     if (!window.confirm("Deseja realmente inativar esta conta?")) return;
     try {
-      await axios.delete(`/api/contas/${id}`);
+      await api.delete(`/api/contas/${id}`);
       alert("Conta inativada com sucesso!");
       fetchContas(true);
     } catch (error: any) {
@@ -533,7 +537,7 @@ function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post("/api/notas/upload", formData);
+      const response = await api.post("/api/notas/upload", formData);
       setResultado(response.data.dados);
       setUploadTab("visual");
     } catch (error: any) {
@@ -548,7 +552,7 @@ function App() {
     if (!resultado) return;
     try {
       setAnalisando(true);
-      const response = await axios.post("/api/notas/analisar", resultado);
+      const response = await api.post("/api/notas/analisar", resultado);
       setAnalise(response.data.analise);
       setUploadTab("analise");
     } catch (error: any) {
@@ -562,7 +566,7 @@ function App() {
     if (!resultado || !analise) return;
     try {
       setSalvando(true);
-      await axios.post("/api/notas/salvar", {
+      await api.post("/api/notas/salvar", {
         dados: resultado,
         analise: analise
       });
@@ -605,7 +609,7 @@ function App() {
       setRagFontes([]);
       setShowFontes(false);
 
-      const response = await axios.post("/api/notas/rag", {
+      const response = await api.post("/api/notas/rag", {
         pergunta: ragPergunta,
         tipo: ragTipo
       });
